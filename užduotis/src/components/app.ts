@@ -24,25 +24,39 @@ class App {
 
     this.carsCollection = new CarsCollection({ cars, brands, models });
     this.carTable = new Table({
-      title: 'All Vehicles',
+      title: 'Visi automobiliai',
       columns: {
         id: 'Id',
-        brand: 'Brand',
-        model: 'model',
-        year: 'price',
-        price: 'price',
+        brand: 'Markė',
+        model: 'Modelis',
+        price: 'Kaina',
+        year: 'Metai',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
+      onDelete: this.handleCarDelete,
     });
     this.brandSelect = new SelectField({
       labelText: 'Markė',
-      options: brands.map(({ id, title }) => ({ title, value: id }))
+      options: brands.map(({ id, title }) => ({ title, value: id })),
+      onChange: this.handleBrandChange
     });
     this.selectedBrandId = null;
 
     this.htmlElement = foundElement;
 
     this.initialize();
+  }
+
+  private handleBrandChange = (brandId: string): void  => {
+    this.selectedBrandId = brandId;
+
+    this.update();
+  }
+
+  private handleCarDelete = (carId: string): void => {
+    this.carsCollection.deleteCarById(carId);
+
+    this.update();
   }
 
   private update = (): void => {
