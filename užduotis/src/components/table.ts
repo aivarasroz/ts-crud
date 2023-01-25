@@ -9,6 +9,7 @@ export type TableProps<Type> = {
   title: string,
   columns: Type,
   rowsData: Type[],
+  onDelete: (id: string) => void,
 };
 
 class Table<Type extends RowData> {
@@ -83,7 +84,7 @@ class Table<Type extends RowData> {
   };
 
   private addActionsCell = (rowHtmlElement: HTMLTableRowElement, id: string): void => {
-    const { } = this.props;
+    const { onDelete } = this.props;
 
     const buttonCell = document.createElement('td');
 
@@ -91,7 +92,7 @@ class Table<Type extends RowData> {
     deleteButton.type = 'button';
     deleteButton.innerHTML = 'Delete';
     deleteButton.className = 'btn btn-danger';
-    deleteButton.addEventListener('click', () => ());
+    deleteButton.addEventListener('click', () => onDelete(id));
     deleteButton.style.width = '80px';
 
     buttonCell.append(deleteButton);
