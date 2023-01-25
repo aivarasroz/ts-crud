@@ -90,10 +90,10 @@ class Table<Type extends RowData> {
 
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
-    deleteButton.innerHTML = 'Delete';
+    deleteButton.innerHTML = 'Delete car';
     deleteButton.className = 'btn btn-danger';
     deleteButton.addEventListener('click', () => onDelete(id));
-    deleteButton.style.width = '80px';
+    deleteButton.style.width = '60px';
 
     buttonCell.append(deleteButton);
     rowHtmlElement.append(buttonCell);

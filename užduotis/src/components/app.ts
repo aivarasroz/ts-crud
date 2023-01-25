@@ -20,23 +20,23 @@ class App {
 
   public constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
-    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
+    if (foundElement === null) throw new Error(`element by sector - not found. '${selector}'`);
 
     this.carsCollection = new CarsCollection({ cars, brands, models });
     this.carTable = new Table({
-      title: 'Visi automobiliai',
+      title: 'All Vehicle',
       columns: {
         id: 'Id',
-        brand: 'Markė',
-        model: 'Modelis',
-        price: 'Kaina',
-        year: 'Metai',
+        brand: 'brand',
+        model: 'model',
+        price: 'Price',
+        year: 'Year',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
       onDelete: this.handleCarDelete,
     });
     this.brandSelect = new SelectField({
-      labelText: 'Markė',
+      labelText: 'Choose Brand',
       options: brands.map(({ id, title }) => ({ title, value: id })),
       onChange: this.handleBrandChange
     });
@@ -63,15 +63,15 @@ class App {
 
     if (selectedBrandId === null) {
       this.carTable.updateProps({
-        title: 'Visi automobiliai',
+        title: 'All Vehicles',
         rowsData: carsCollection.all.map(stringifyProps),
       });
     } else {
       const brand = brands.find(b => b.id === selectedBrandId);
-      if (brand === undefined) throw new Error('Pasirinkta neegzistuojanti markė');
+      if (brand === undefined) throw new Error('Non-Existant Brand was chosen!');
 
       this.carTable.updateProps({
-        title: `${brand.title} markės automobiliai`,
+        title: `Filtered only :${brand.title} brand`,
         rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
       });
     }
