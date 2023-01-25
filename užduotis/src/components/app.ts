@@ -33,6 +33,7 @@ class App {
         year: 'Metai',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
+      onDelete: this.handleCarDelete,
     });
     this.brandSelect = new SelectField({
       labelText: 'Markė',
@@ -48,6 +49,11 @@ class App {
 
   private handleBrandChange = (brandId: string): void  => {
     this.selectedBrandId = brandId;
+
+    this.update();
+  }
+  private handleCarDelete = (carId: string): void => {
+    this.carsCollection.deleteCarById(carId);
 
     this.update();
   }
