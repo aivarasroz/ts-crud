@@ -56,6 +56,13 @@ class Table<Type extends RowData> {
     this.tbody.append(...rowsHtmlElements);
   };
 
+  public updateProps = (newProps: Partial<TableProps<Type>>): void => {
+    this.props = {
+      ...this.props,
+      ...newProps
+    };
+  }
+
   private initialize = (): void => {
     this.initializeBody();
     this.initializethead();
@@ -63,5 +70,7 @@ class Table<Type extends RowData> {
     this.htmlElement.append(
       this.thead,
       this.tbody);};
+
+      
 }
 export default Table
