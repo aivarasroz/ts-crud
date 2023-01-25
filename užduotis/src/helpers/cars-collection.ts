@@ -44,7 +44,10 @@ class CarsCollection {
       .map(this.joinCar);
 
     return brandCars;
-  };
-}
+  }
+    public deleteCarById = (carId: string): void => {
+      this.props.cars = this.props.cars.filter((car) => car.id !== carId);
+    };
+  }
 
 export default CarsCollection;
