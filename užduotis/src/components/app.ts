@@ -8,67 +8,48 @@ import CarJoined from '../types/car-joined';
 import SelectField from './select-field';
 
 class App {
-  private htmlElement: HTMLElement;
-
   private carsCollection: CarsCollection;
 
   private selectedBrandId: null | string;
 
   private brandSelect: SelectField
 
-  private tableCars: Table<StringifyObjectProps<CarJoined>>;
+  private carTable: Table<StringifyObjectProps<CarJoined>>;
 
+  private htmlElement: HTMLElement;
 
   public constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
-    
-    this.carsCollection = new CarsCollection({models, brands, cars});
+    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
 
-    if (foundElement === null) throw new Error(`Selector is not found.'${selector}'`);
-
-    this.htmlElement = foundElement;
-
+    this.carsCollection = new CarsCollection({ cars, brands, models });
+    this.carTable = new Table({
+      title: 'All Vehicles',
+      columns: {
+        id: 'Id',
+        brand: 'Brand',
+        model: 'model',
+        year: 'price',
+        price: 'price',
+      },
+      rowsData: this.carsCollection.all.map(stringifyProps),
+    });
     this.brandSelect = new SelectField({
       labelText: 'Markė',
-      options: brands.map(({ id, title }) => ({ title, value: id })),
-      onChange: this.handleBrandChange
+      options: brands.map(({ id, title }) => ({ title, value: id }))
     });
     this.selectedBrandId = null;
 
-    this.tableCars = new Table({
-      title: 'Vehicles for Sale',
-      columns: {
-        id: 'id',
-        brand: 'Brand',
-        model: 'Model',
-        year: 'Year',
-        price: 'Price'
-      },
-      rowsData: this.carsCollection.all.map(stringifyProps),
-    })
-    
-  }
-  private handleBrandChange = (brandId: string): void  => {
-    this.selectedBrandId = brandId;
+    this.htmlElement = foundElement;
 
-    this.update();
+    this.initialize();
   }
 
-  public initialize = (): void => {
-    const container = document.createElement('div');
-    container.className = 'container my-4 d-flex  flex-column gap-3';
-    container.append(
-      this.brandSelect.htmlElement,
-      this.tableCars.htmlElement
-    );
-
-    this.htmlElement.append(container);
-  };
   private update = (): void => {
     const { selectedBrandId, carsCollection } = this;
 
     if (selectedBrandId === null) {
-      this.tableCars.updateProps({
+      this.carTable.updateProps({
         title: 'Visi automobiliai',
         rowsData: carsCollection.all.map(stringifyProps),
       });
@@ -76,13 +57,23 @@ class App {
       const brand = brands.find(b => b.id === selectedBrandId);
       if (brand === undefined) throw new Error('Pasirinkta neegzistuojanti markė');
 
-      this.tableCars.updateProps({
+      this.carTable.updateProps({
         title: `${brand.title} markės automobiliai`,
         rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
       });
     }
   }
   
+  public initialize = (): void => {
+    const container = document.createElement('div');
+    container.className = 'container my-4 d-flex  flex-column gap-3';
+    container.append(
+      this.brandSelect.htmlElement,
+      this.carTable.htmlElement
+    );
+
+    this.htmlElement.append(container);
+  };
 }
 
 export default App;

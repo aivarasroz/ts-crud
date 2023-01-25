@@ -10,7 +10,7 @@ export type SelectFieldProps = {
 };
 
 class SelectField {
-  private static uniqueId = 0;
+  private static uniqId = 0;
 
   private props: SelectFieldProps;
 
@@ -23,7 +23,7 @@ class SelectField {
   constructor(props: SelectFieldProps) {
     this.props = props;
 
-    SelectField.uniqueId += 1;
+    SelectField.uniqId += 1;
     this.htmlElement = document.createElement('div');
     this.htmlSelectElement = document.createElement('select');
     this.htmlLabelElement = document.createElement('label');
@@ -31,8 +31,9 @@ class SelectField {
     this.initialize();
     this.renderView();
   }
+
   private initialize = (): void => {
-    const elementId = `select-${SelectField.uniqueId}`;
+    const elementId = `select-${SelectField.uniqId}`;
 
     this.htmlLabelElement.setAttribute('for', elementId);
 
