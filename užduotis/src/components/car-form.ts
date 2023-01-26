@@ -3,6 +3,7 @@ import SelectField from "./select-field";
 import brands from '../data/brands';
 import models from '../data/models';
 
+
 export type Values = {
   brand: string,
   model: string,
@@ -17,7 +18,7 @@ export type CarFormProps = {
   brand: string,
   price: string,
   year: string,
-  onSubmit: (values: string) => void,
+  onSubmit: (values: Values) => void,
   submitBtnText: string
 }
 export type Fields = {
@@ -29,18 +30,12 @@ export type Fields = {
 
 class CarForm {
   private props: CarFormProps;
-  private brand: SelectField;
-  private model: SelectField;
-  private price: TextField;
-  private years: TextField;
   private fields: Fields;
-
   
   private htmlFormHeader: HTMLHeadingElement;
   private htmlFieldsContainer: HTMLDivElement;
   private htmlsubmitBtnText: HTMLButtonElement;
   public htmlElement: HTMLFormElement;
-
 
   constructor (props: CarFormProps) {
     this.props = props
@@ -50,34 +45,67 @@ class CarForm {
     this.htmlFieldsContainer = document.createElement('div');
     this.htmlsubmitBtnText = document.createElement('button');
 
-    this.brand = new SelectField({
+
+
+    this.fields = {
+
+    brand: new SelectField({
       name: 'brand',
       labelText: 'Car brand',
       options: brands.map(({ id, title }) => ({ title, value: id })),
-    });
+    }),
 
-    this.model = new SelectField({
+    model: new SelectField({
       name: 'model',
       labelText: 'Car Model',
       options: models.map(({ id, title }) => ({ title, value: id })),
-    });
+    }),
 
-    this.price = new TextField({
+    price: new TextField({
       name: 'price',
       labelText: 'Car Price',
-    });
+    }),
 
-    this.years = new TextField({
+    year: new TextField({
       name: 'year',
       labelText: 'Car Year',
     }),
 
-    this.initialize();
-    this.renderView();
+  }
+  this.initialize();
+  this.renderView();
   }
 
+  private handleSubmit = (e: SubmitEvent) => {
+    e.preventDefault();
+
+    const { onSubmit } = this.props;
+
+    const formData = new FormData(this.htmlElement);
+
+    const brand = formData.get('brand') as string | null;
+    const model = formData.get('model') as string | null;
+    const price = formData.get('price') as string | null;
+    const year = formData.get('year') as string | null;
+
+    if (!(brand && price && model && year)) {
+      alert('Form Error');
+      return;
+    }
+
+    const formValues: Values = {
+      brand,
+      model,
+      price,
+      year,
+    };
+
+    onSubmit(formValues);
+  };
+
+
   initialize(): void {
-    this.htmlFormHeader.className = 'h3 text-center';
+    this.htmlFormHeader.className = 'h2 text-center';
 
     const fieldsArr = Object.values(this.fields);
     this.htmlFieldsContainer.className = 'd-flex flex-column gap-3';
@@ -105,6 +133,7 @@ class CarForm {
         value: fieldValue,
       });
     });
+    this.htmlElement.addEventListener('submit', this.handleSubmit);
   };
 
   updateProps(props: Partial<CarFormProps>) {
