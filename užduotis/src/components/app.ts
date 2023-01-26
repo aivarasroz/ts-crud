@@ -49,8 +49,8 @@ class App {
 
     const initialBrandId = brands[0].id;
     this.carForm = new CarForm({
-      title: 'Sukurkite naują automobilį',
-      submitBtnText: 'Sukurti',
+      title: 'Create New Car',
+      submitBtnText: 'Create',
       values: {
         brand: initialBrandId,
         model: models.filter((m) => m.brandId === initialBrandId)[0].id,
@@ -94,15 +94,15 @@ class App {
   
       if (selectedBrandId === null) {
         this.carTable.updateProps({
-          title: 'Visi automobiliai',
+          title: 'All Vehicles',
           rowsData: carsCollection.all.map(stringifyProps),
         });
       } else {
         const brand = brands.find((b) => b.id === selectedBrandId);
-        if (brand === undefined) throw new Error('Pasirinkta neegzistuojanti markė');
+        if (brand === undefined) throw new Error('Non-Existant brand...');
   
         this.carTable.updateProps({
-          title: `${brand.title} markės automobiliai`,
+          title: `${brand.title} brand`,
           rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
         });
       }
