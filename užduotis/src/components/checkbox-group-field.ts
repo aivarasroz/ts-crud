@@ -1,72 +1,107 @@
-export type Options {
-}
-
-
 export type CheckboxGroupFieldProps = {
   labelText: string;
   name: string;
   options: Array<{ label: string, value: string}>;
-  selected?: Array<{ label: string, value: string}>
+  selected?: Array<{ label: string, value: string}>;
 }
 
+class CheckboxGroupField {
 
-class TextField {
-  // TODO: prideti privacia statine savybe count += 1 ()
-  //TODO sukurti papildoma elementa  optiosns Contianer
+  private labelHtmlElement: HTMLLabelElement;
+  private optionsContainer: HTMLDivElement;
+  private static count: number = 0;
+  private id: string;
   private props: CheckboxGroupFieldProps;
 
   public htmlElement: HTMLDivElement;
 
   constructor(props: CheckboxGroupFieldProps) {
+    CheckboxGroupField.count += 1;
     this.props = props;
-    this.htmlElement = document.createElement('div')
-    //TODO sukurti papildoma elementa  optiosns Contianer
-    //TODO kvieciam initialize ir rendervieew constructor.
+    this.htmlElement = document.createElement('div');
+    this.optionsContainer = document.createElement('div');
+    this.id = `CheckboxGroupField_${CheckboxGroupField.count}`;
+    this.labelHtmlElement = document.createElement('label');
+    
+    this.initialize();
+    this.renderView();
+  };
 
-    //TODO viskas kas priklauso nuo prpsu yra renderView 
+  private static createCheckbox = ({
+    name,
+    id,
+    value,
+    checked,
+  }: { name: string, id: string, value: string, checked: boolean }) => {
+    const checkboxHtmlElement = document.createElement('input');
+    checkboxHtmlElement.type = 'checkbox';
+    checkboxHtmlElement.id = id;
+    checkboxHtmlElement.name = name;
+    checkboxHtmlElement.value = value;
+    checkboxHtmlElement.className = 'form-check-input';
+    checkboxHtmlElement.checked = checked;
 
-    //TODO kad abu metodai pasiektu lable ir input , reikia kurti pries kosntruktoriu bendrus kintamuosius, ir priskirti const === this.
+    return checkboxHtmlElement;
+  };
+
+  private static createOptionLabel = ({
+    htmlFor,
+    innerHTML,
+  }: { htmlFor: string, innerHTML: string }) => {
+    const labelHtmlElement = document.createElement('label');
+    labelHtmlElement.className = 'form-check-label';
+    labelHtmlElement.innerHTML = innerHTML;
+    labelHtmlElement.setAttribute('for', htmlFor);
+
+    return labelHtmlElement;
+  };
+
+  private initialize() {
+    this.htmlElement.append(
+      this.labelHtmlElement,
+      this.optionsContainer
+    );
+  };
+
+  private renderView() {
+    const { name, options, selected } = this.props;
+
+    this.optionsContainer.innerHTML = '';
+    options.forEach((option) => {
+      const optionId = `${this.id}_${option.value}`;
+
+      const checkboxFieldHtmlElement = document.createElement('div');
+      checkboxFieldHtmlElement.className = 'form-check';
+
+      const checkboxHtmlElement = CheckboxGroupField.createCheckbox({
+        name,
+        id: optionId,
+        value: option.value,
+        checked: Boolean(selected && selected.includes(option)),
+      });
+
+      const labelHtmlElement = CheckboxGroupField.createOptionLabel({
+        htmlFor: optionId,
+        innerHTML: option.label,
+      });
+
+      checkboxFieldHtmlElement.append(
+        checkboxHtmlElement,
+        labelHtmlElement,
+      );
+
+      this.optionsContainer.appendChild(checkboxFieldHtmlElement);
+    });
+  };
+
+
+  updateProps(props: Partial<CheckboxGroupFieldProps>) {
+    this.props = {
+      ...props,
+      ...this.props,
+    }
+    this.renderView();
   }
-
-
-  initialize() {
-    // ,this. label . htmlFor + this.id
-    // Label - class name nustatyti + ideti innerHTML
-
-    // TODO: appendint htmlElement su label 
-
-    //TODO sukurti papildoma elementa  optiosnsContianer 
-  
-
-  }
-
-  renderView() {
-  //TODO: pagal gautus  optionus suformuoti:
-
-  /*
-  <div>
-     <label...>
-     <input type="checkbox" ...>
-  </div>
-
-   */
-
-
-  //TODO kintamasis si optionais this.optionscontainer.innerhtml = this.props.options + susaistymas (map (({ label, value} ) => itruakti checkbox div form bootstrap + kur tekstas matosi &{label}))
-  //TODO + join su tarpu  
-  //TODO visa optionView kintamajai ideti i htmlElement.innerHMTL iteruojant '+='
-  // map viduje  const optionid = this. id +value
-  // return ` booststrap div elementai` ideti i for = optionId .
-  // i div  name itruakti this.props.name
-  }
-
-
-  updateProps() {
-    // TODO aprasyti dalini tipa props metodo parametru skiltyje su generic type.
-    // TODO atnaujina propsus kai objekru struturoje yra spread elementas this.props ir props.
-    // TODO po objekto  kvieciam renderview.
-  }
-
 }
 
-export default TextField;
+export default CheckboxGroupField;
