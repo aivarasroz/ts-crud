@@ -4,13 +4,15 @@ type OptionType = {
 };
 
 export type SelectFieldProps = {
+  name?: string,
   labelText: string,
-  onChange: (newValue: string) => void,
+  onChange?: (newValue: string) => void,
   options: OptionType[],
+  value?: string,
 };
 
 class SelectField {
-  private static uniqueId = 0;
+  private static instanceCounter= 0;
 
   private props: SelectFieldProps;
 
@@ -23,7 +25,7 @@ class SelectField {
   constructor(props: SelectFieldProps) {
     this.props = props;
 
-    SelectField.uniqueId += 1;
+    SelectField.instanceCounter += 1;
     this.htmlElement = document.createElement('div');
     this.htmlSelectElement = document.createElement('select');
     this.htmlLabelElement = document.createElement('label');
@@ -33,11 +35,12 @@ class SelectField {
   }
 
   private initialize = (): void => {
-    const elementId = `select-${SelectField.uniqueId}`;
+    const elementId = `select-${SelectField.instanceCounter}`;
 
     this.htmlLabelElement.setAttribute('for', elementId);
 
     this.htmlSelectElement.className = 'form-select';
+
     this.htmlSelectElement.id = elementId;
 
     this.htmlElement.className = 'form-group';
@@ -47,21 +50,29 @@ class SelectField {
     );
   };
 
+
   private renderView = (): void => {
-    const { labelText, onChange } = this.props;
+    const { labelText, onChange, name } = this.props;
 
     this.htmlLabelElement.innerHTML = labelText;
-    this.htmlSelectElement.addEventListener('change', () => onChange(this.htmlSelectElement.value));
+
+    if (onChange) {
+      this.htmlSelectElement.addEventListener('change', () => onChange(this.htmlSelectElement.value));
+    }
+    if (name) {
+      this.htmlSelectElement.name = name;
+    }
     this.renderSelectOptions();
   };
 
   private renderSelectOptions = (): void => {
-    const { options } = this.props;
+    const { options, value } = this.props;
 
     const optionsHtmlElements = options.map((option) => {
       const element = document.createElement('option');
       element.innerHTML = option.title;
       element.value = option.value;
+      element.selected = option.value === value;
 
       return element;
     });
