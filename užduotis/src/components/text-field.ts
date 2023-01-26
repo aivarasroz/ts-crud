@@ -26,33 +26,43 @@ class TextField {
     this.inputHtmlElement = document.createElement('input');
     this.id = `TextField_${TextField.count}`;
 
-    //TODO kvieciam initialize ir rendervieew constructor.
-
-    //TODO viskas kas priklauso nuo prpsu yra renderView 
-
-  }
-
-
-  initialize() {
-    // TODO: sukurti label and input , kuriant htmlelement
-    // Label - class name nustatyti + ideti innerHTML
-
-    // TODO: appendint htmlElement su label ir input
-    // TODO: irasyti atributa for (htmlFor(pirmas parametras : pavadinimas, antras - reiksme)
+    this.initialize();
+    this.renderView();
 
   }
 
-  renderView() {
-    //TODO priskirti input value air label name === props.. keiciant input/label(labeltext++)
+  private initialize() {
+
+    this.htmlElement.append(
+      this.labelHtmlElement,
+      this.inputHtmlElement
+    );
+
+    this.labelHtmlElement.setAttribute('for', this.id);
+    this.labelHtmlElement.className = 'd-block';
+
+    this.labelHtmlElement.id = this.id;
+    this.inputHtmlElement.className = 'w-100';
   }
 
+  private renderView() {
+    const {name, initialValue, labelText} = this.props;
 
-  updateProps() {
-    // TODO aprasyti dalini tipa props metodo parametru skiltyje su generic type.
-    // TODO atnaujina propsus kai objekru struturoje yra spread elementas this.props ir props.
-    // TODO po objekto  kvieciam renderview.
+    this.inputHtmlElement.name = name;
+    this.labelHtmlElement.innerHTML = labelText;
+
+    if (initialValue !== undefined)
+      {this.inputHtmlElement.value = initialValue
+      };
   }
 
-}
+  updateProps(props: Partial<TextFieldProps>) {
+    this.props = { 
+      ...this.props,
+      ...props,
+    }
+    this.renderView();
+    };
+  }
 
 export default TextField;
