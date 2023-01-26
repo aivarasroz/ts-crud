@@ -5,11 +5,11 @@ export type TextFieldProps = {
 
 }
 
-
 class TextField {
 
-  private static count: number = 0
+  private static count: number = 0;
   private props: TextFieldProps;
+  private id: string;
 
   public htmlElement: HTMLDivElement;
 
@@ -18,19 +18,17 @@ class TextField {
 
   constructor(props: TextFieldProps) {
     TextField.count += 1;
-    
+
     this.props = props;
 
     this.htmlElement = document.createElement('div');
     this.labelHtmlElement = document.createElement('label');
     this.inputHtmlElement = document.createElement('input');
+    this.id = `TextField_${TextField.count}`;
 
     //TODO kvieciam initialize ir rendervieew constructor.
 
     //TODO viskas kas priklauso nuo prpsu yra renderView 
-
-    //TODO kad abu metodai pasiektu lable ir input , reikia kurti pries kosntruktoriu bendrus kintamuosius, ir priskirti const === this.
-
 
   }
 
