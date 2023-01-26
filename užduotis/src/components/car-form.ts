@@ -1,5 +1,7 @@
 import TextField from "./text-field";
 import SelectField from "./select-field";
+import brands from '../data/brands';
+import models from '../data/models';
 
 type CarFormProps = {
   model: string,
@@ -20,29 +22,41 @@ class CarForm {
   private htmlFormHeader: HTMLHeadingElement;
   private htmlFieldsContainer: HTMLDivElement;
   private htmlsubmitBtnText: HTMLButtonElement;
-
   public htmlElement: HTMLFormElement;
-  
-  // TODO private heading  and submitbutton : HTMLHeading and HTMLBUTTONelelenr ir perkelt i constructoriu
-  // su this. = doc createle('').
 
-  // TODO  3.1 turi tureti private ivesties laukus.
-  // TODO jas reikia sukurto construcotriuje 
+
   constructor (props: CarFormProps) {
     this.props = props
 
-    this.htmlElement = document.createElement( ' form');
+    this.htmlElement = document.createElement('form');
+    this.htmlFormHeader = document.createElement('h3');
+    this.htmlFieldsContainer = document.createElement('div');
+    this.htmlsubmitBtnText = document.createElement('button');
 
+    this.brand = new SelectField({
+      name: 'brand',
+      labelText: 'Car brand',
+      options: brands.map(({ id, title }) => ({ title, value: id })),
+    });
 
-    //TRODO heading html element
+    this.model = new SelectField({
+      name: 'model',
+      labelText: 'Car Model',
+      options: models.map(({ id, title }) => ({ title, value: id })),
+    });
 
-    // TODO implementuoti initialize ir renderview metoda
-    // TODO visos naujos NEW savybes ({ labeltext - pavadinimas, name- title, value - string: ( props.values?.title) ?? ' ' , ... })
+    this.price = new TextField({
+      name: 'price',
+      labelText: 'Car Price',
+    });
 
-    // Checklist  savybeje options su masyvu. 
+    this.years = new TextField({
+      name: 'year',
+      labelText: 'Car Year',
+    }),
 
-
-
+    this.initialize();
+    this.renderView();
   }
 
   initialize() {
