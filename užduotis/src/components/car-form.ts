@@ -3,7 +3,16 @@ import SelectField from "./select-field";
 import brands from '../data/brands';
 import models from '../data/models';
 
-type CarFormProps = {
+export type Values = {
+  brand: string,
+  model: string,
+  price: string,
+  year: string,
+};
+
+export type CarFormProps = {
+  values: Values,
+  title: string,
   model: string,
   brand: string,
   price: string,
@@ -11,6 +20,12 @@ type CarFormProps = {
   onSubmit: (values: string) => void,
   submitBtnText: string
 }
+export type Fields = {
+  brand: SelectField,
+  model: SelectField,
+  price: TextField,
+  year: TextField,
+};
 
 class CarForm {
   private props: CarFormProps;
@@ -18,7 +33,9 @@ class CarForm {
   private model: SelectField;
   private price: TextField;
   private years: TextField;
+  private fields: Fields;
 
+  
   private htmlFormHeader: HTMLHeadingElement;
   private htmlFieldsContainer: HTMLDivElement;
   private htmlsubmitBtnText: HTMLButtonElement;
@@ -59,40 +76,44 @@ class CarForm {
     this.renderView();
   }
 
-  initialize() {
+  initialize(): void {
+    this.htmlFormHeader.className = 'h3 text-center';
 
-    //TODO ideti html classiu this.htmlElement.className = ' shadow p3
+    const fieldsArr = Object.values(this.fields);
+    this.htmlFieldsContainer.className = 'd-flex flex-column gap-3';
+    this.htmlFieldsContainer.append(...fieldsArr.map((field) => field.htmlElement));
+    this.htmlsubmitBtnText.className = 'btn btn-primary';
 
-    //TODO thishtmllemenr.append ( this. fields.) + this.heading + submitbutton
+    this.htmlElement.className = 'card d-flex flex-column gap-2 p-2';
+    this.htmlElement.append(
+      this.htmlFormHeader,
+      this.htmlFieldsContainer,
+      this.htmlsubmitBtnText,
+    );
+  };
 
-    //TODO this heading, submitbutton.typ ir classname = '...'
+  renderView(): void {
+    const { title, values, submitBtnText } = this.props;
 
-    //TODO add event listenenr ideti su this.htmlelemenr + preventDefault  + new kintamasis form Data = New FormData (this.html element) + kintamasis title = ofrmdata.get('title') + props.onSubmit(). sukur if (typeof title !== 'string;) { alert pavadinimas: return}, dar viena if su price, ir su description, + itraukti categfories kintamaji  su .getAll
+    this.htmlFormHeader.innerHTML = title;
+    this.htmlsubmitBtnText.innerHTML = submitBtnText;
 
+    const valuesKeyValueArr = Object.entries(values) as [keyof Values, string][];
+    valuesKeyValueArr.forEach(([fieldName, fieldValue]) => {
+      const field = this.fields[fieldName];
+      field.updateProps({
+        value: fieldValue,
+      });
+    });
+  };
 
-    //TODO kintamasis values : Values (importas is kitur) { title, price: Number(price), categories, description}
-
-    //TODO this.props.onsubmit(values), this.htmlelement.reset()
-
-
+  updateProps(props: Partial<CarFormProps>) {
+    this.props = {
+      ...this.props,
+      ...props
+    }
+    this.renderView();
   }
-
-  renderView() {
-    // TODO headin irr submitbutton . innerhtml  = this.props.title ir submitbtntxt
-
-    // TODO if ( this.porps.values?.title)  { this. fieldai . updateprops( grazina value: this....)} visasi atvejais if
-    // TODO categories veiksme vietoj value: - Selected:
-
-
-  }
-
-  updateProps() {
-    // TODO props partial veiksmas 
-    // TODO implementuoto this. renderview
-
-    // visus propsus objekte su spread operator
-  }
-
 }
 
 export default CarForm
