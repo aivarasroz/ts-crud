@@ -1,4 +1,3 @@
-import CarsCollection from '../helpers/cars-collection';
 import cars from '../data/cars';
 import models from '../data/models';
 import brands from '../data/brands';
@@ -6,6 +5,8 @@ import Table from './table';
 import stringifyProps, { StringifyObjectProps } from "../helpers/stringify-object";
 import CarJoined from '../types/car-joined';
 import SelectField from './select-field';
+import CarForm, {Values} from './car-form';
+import CarsCollection, { CarProps } from '../helpers/cars-collection';
 
 class App {
   private carsCollection: CarsCollection;
@@ -13,6 +14,7 @@ class App {
   private selectedBrandId: null | string;
 
   private brandSelect: SelectField
+  private carForm: CarForm;
 
   private carTable: Table<StringifyObjectProps<CarJoined>>;
 
@@ -40,53 +42,89 @@ class App {
       options: brands.map(({ id, title }) => ({ title, value: id })),
       onChange: this.handleBrandChange
     });
+    
     this.selectedBrandId = null;
 
     this.htmlElement = foundElement;
 
-    this.initialize();
+    const initialBrandId = brands[0].id;
+    this.carForm = new CarForm({
+      title: 'Create New Car',
+      submitBtnText: 'Create',
+      values: {
+        brand: initialBrandId,
+        model: models.filter((m) => m.brandId === initialBrandId)[0].id,
+        price: '0',
+        year: '2000',
+      },
+      onSubmit: this.handleCreateCar,
+    });
   }
 
-  private handleBrandChange = (brandId: string): void  => {
-    this.selectedBrandId = brandId;
-
-    this.update();
-  }
-  private handleCarDelete = (carId: string): void => {
-    this.carsCollection.deleteCarById(carId);
-
-    this.update();
-  }
-
-  private update = (): void => {
-    const { selectedBrandId, carsCollection } = this;
-
-    if (selectedBrandId === null) {
-      this.carTable.updateProps({
-        title: 'All Vehicles',
-        rowsData: carsCollection.all.map(stringifyProps),
-      });
-    } else {
-      const brand = brands.find(b => b.id === selectedBrandId);
-      if (brand === undefined) throw new Error('Non-Existant Brand was chosen!');
-
-      this.carTable.updateProps({
-        title: `Filtered only :${brand.title} brand`,
-        rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
-      });
-    }
+    private handleBrandChange = (brandId: string) => {
+      const brand = brands.find((b) => b.id === brandId);
+      this.selectedBrandId = brand ? brandId : null;
+  
+      this.renderView();
+    };
+  
+    private handleCarDelete = (carId: string) => {
+      this.carsCollection.deleteCarById(carId);
+  
+      this.renderView();
+    };
+  
+    private handleCreateCar = ({
+      brand, model, price, year,
+    }: Values): void => {
+      const carProps: CarProps = {
+        brandId: brand,
+        modelId: model,
+        price: Number(price),
+        year: Number(year),
+      };
+  
+      this.carsCollection.add(carProps);
+  
+      this.renderView();
+    };
+  
+    private renderView = () => {
+      const { selectedBrandId, carsCollection } = this;
+  
+      if (selectedBrandId === null) {
+        this.carTable.updateProps({
+          title: 'Visi automobiliai',
+          rowsData: carsCollection.all.map(stringifyProps),
+        });
+      } else {
+        const brand = brands.find((b) => b.id === selectedBrandId);
+        if (brand === undefined) throw new Error('Pasirinkta neegzistuojanti markė');
+  
+        this.carTable.updateProps({
+          title: `${brand.title} markės automobiliai`,
+          rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
+        });
+      }
+    };
+  
+    public initialize = (): void => {
+      const uxContainer = document.createElement('div');
+      uxContainer.className = 'd-flex gap-4 align-items-start';
+      uxContainer.append(
+        this.carTable.htmlElement,
+        this.carForm.htmlElement,
+      );
+  
+      const container = document.createElement('div');
+      container.className = 'container my-4 d-flex flex-column gap-4';
+      container.append(
+        this.brandSelect.htmlElement,
+        uxContainer,
+      );
+  
+      this.htmlElement.append(container);
+    };
   }
   
-  public initialize = (): void => {
-    const container = document.createElement('div');
-    container.className = 'container my-4 d-flex  flex-column gap-3';
-    container.append(
-      this.brandSelect.htmlElement,
-      this.carTable.htmlElement
-    );
-
-    this.htmlElement.append(container);
-  };
-}
-
-export default App;
+  export default App;
