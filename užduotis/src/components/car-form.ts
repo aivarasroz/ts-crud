@@ -14,10 +14,6 @@ export type Values = {
 export type CarFormProps = {
   values: Values,
   title: string,
-  model: string,
-  brand: string,
-  price: string,
-  year: string,
   onSubmit: (values: Values) => void,
   submitBtnText: string
 }
