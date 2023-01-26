@@ -13,13 +13,9 @@ export type SelectFieldProps = {
 
 class SelectField {
   private static instanceCounter= 0;
-
   private props: SelectFieldProps;
-
   private htmlSelectElement: HTMLSelectElement;
-
   private htmlLabelElement: HTMLLabelElement;
-
   public htmlElement: HTMLDivElement;
 
   constructor(props: SelectFieldProps) {
@@ -36,13 +32,9 @@ class SelectField {
 
   private initialize = (): void => {
     const elementId = `select-${SelectField.instanceCounter}`;
-
     this.htmlLabelElement.setAttribute('for', elementId);
-
     this.htmlSelectElement.className = 'form-select';
-
     this.htmlSelectElement.id = elementId;
-
     this.htmlElement.className = 'form-group';
     this.htmlElement.append(
       this.htmlLabelElement,
@@ -73,12 +65,18 @@ class SelectField {
       element.innerHTML = option.title;
       element.value = option.value;
       element.selected = option.value === value;
-
       return element;
     });
-
     this.htmlSelectElement.innerHTML = '';
     this.htmlSelectElement.append(...optionsHtmlElements);
+  };
+
+  public updateProps = (props: Partial<SelectFieldProps>): void => {
+    this.props = {
+      ...this.props,
+      ...props,
+    };
+    this.renderView();
   };
 }
 
