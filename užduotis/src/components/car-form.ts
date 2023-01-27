@@ -15,8 +15,10 @@ export type CarFormProps = {
   values: Values,
   title: string,
   onSubmit: (values: Values) => void,
-  submitBtnText: string
+  submitBtnText: string,
+  isEdited: boolean,
 }
+
 export type Fields = {
   brand: SelectField,
   model: SelectField,
@@ -117,7 +119,19 @@ class CarForm {
   };
 
   renderView(): void {
-    const { title, values, submitBtnText } = this.props;
+    const { title, values, submitBtnText, isEdited } = this.props;
+
+    if (isEdited) {
+      this.htmlElement.classList.add('border');
+      this.htmlElement.classList.add('border-warning');
+      this.htmlsubmitBtnText.classList.add('btn-warning');
+      this.htmlsubmitBtnText.classList.remove('btn-success');
+    } else {
+      this.htmlElement.classList.remove('border');
+      this.htmlElement.classList.remove('border-warning');
+      this.htmlsubmitBtnText.classList.add('btn-success');
+      this.htmlsubmitBtnText.classList.remove('btn-warning');
+    }
 
     this.htmlFormHeader.innerHTML = title;
     this.htmlsubmitBtnText.innerHTML = submitBtnText;
