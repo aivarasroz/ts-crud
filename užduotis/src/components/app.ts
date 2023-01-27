@@ -20,7 +20,7 @@ class App {
   public constructor(selector: string) {
 
     this.editedCarId = null;
-    
+
     const foundElement = document.querySelector<HTMLElement>(selector);
     if (foundElement === null) throw new Error(`element by sector - not found. '${selector}'`);
 
@@ -101,10 +101,11 @@ class App {
     }
   
     private renderView = () => {
-      const { selectedBrandId, carsCollection } = this;
+      const { selectedBrandId, carsCollection, editedCarId } = this;
   
       if (selectedBrandId === null) {
         this.carTable.updateProps({
+          editedCarId,
           title: 'All Vehicles',
           rowsData: carsCollection.all.map(stringifyProps),
         });
