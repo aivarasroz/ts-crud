@@ -11,6 +11,7 @@ export type TableProps<Type> = {
   rowsData: Type[],
   onDelete: (id: string) => void,
   onEdit: (id: string) => void,
+  editedCarId: string | null,
 };
 
 class Table<Type extends RowData> {

@@ -10,17 +10,17 @@ import CarsCollection, { CarProps } from '../helpers/cars-collection';
 
 class App {
   private carsCollection: CarsCollection;
-
   private selectedBrandId: null | string;
-
   private brandSelect: SelectField
   private carForm: CarForm;
-
+  private editedCarId: string | null;
   private carTable: Table<StringifyObjectProps<CarJoined>>;
-
   private htmlElement: HTMLElement;
 
   public constructor(selector: string) {
+
+    this.editedCarId = null;
+    
     const foundElement = document.querySelector<HTMLElement>(selector);
     if (foundElement === null) throw new Error(`element by sector - not found. '${selector}'`);
 
@@ -36,11 +36,13 @@ class App {
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
       onDelete: this.handleCarDelete,
+      onEdit: this.handleCarEdit,
+      editedCarId: this.editedCarId,
     });
     this.brandSelect = new SelectField({
       labelText: 'Choose Brand',
       options: brands.map(({ id, title }) => ({ title, value: id })),
-      onChange: this.handleBrandChange
+      onChange: this.handleBrandChange,
     });
     
     this.selectedBrandId = null;
@@ -88,6 +90,15 @@ class App {
   
       this.renderView();
     };
+
+    private handleCarEdit = (carId: string) => {
+      if (this.editedCarId === carId) {
+        this.editedCarId = null;
+      } else {
+        this.editedCarId = carId;
+      }
+      this.renderView();
+    }
   
     private renderView = () => {
       const { selectedBrandId, carsCollection } = this;
