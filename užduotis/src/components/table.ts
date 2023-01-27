@@ -1,5 +1,3 @@
-
-
 type RowData = {
   id: string,
   [key: string]: string,
@@ -17,23 +15,18 @@ export type TableProps<Type> = {
 class Table<Type extends RowData> {
 
   private props: TableProps<Type>;
-
   private tbody: HTMLTableSectionElement;
-
   private thead: HTMLTableSectionElement;
-
   public htmlElement: HTMLTableElement;
 
   public constructor(props: TableProps<Type>) {
     this.props = props;
-
 
     this.htmlElement = document.createElement('table');
     this.thead = document.createElement('thead');
     this.tbody = document.createElement('tbody');
 
     this.initialize();
-    this.renderView();
   }
 
 
@@ -43,6 +36,8 @@ class Table<Type extends RowData> {
       this.thead,
       this.tbody,
     );
+
+    this.renderView();
   };
 
   private renderView = (): void => {
@@ -69,63 +64,58 @@ class Table<Type extends RowData> {
     this.tbody.innerHTML = '';
     const rowsHtmlElements = rowsData
       .map((rowData) => {
-        const rowHtmlElement = document.createElement('tr');
+        const tr = document.createElement('tr');
         if (editedCarId === rowData.id) {
-          rowHtmlElement.style.backgroundColor = '#C29FCF';
+          tr.style.backgroundColor = '#C6E2FF';
         }
 
         const cellsHtmlString = Object.keys(columns)
           .map((key) => `<td>${rowData[key]}</td>`)
           .join(' ');
 
-        rowHtmlElement.innerHTML = cellsHtmlString;
+        tr.innerHTML = cellsHtmlString;
 
-        this.addActionsCell(rowHtmlElement, rowData.id);
+        this.addActionsCell(tr, rowData.id);
 
-        return rowHtmlElement;
+        return tr;
       });
 
     this.tbody.append(...rowsHtmlElements);
   };
 
-  private addActionsCell = (rowHtmlElement: HTMLTableRowElement, id: string): void => {
+  private addActionsCell = (tr: HTMLTableRowElement, id: string) => {
     const { onDelete, onEdit, editedCarId } = this.props;
 
     const buttonCell = document.createElement('td');
-    buttonCell.className = 'd-flex justify-content-center gap-3'
+    buttonCell.className = 'd-flex justify-content-center gap-2';
 
     const isCancelButton = editedCarId === id;
     const updateButton = document.createElement('button');
     updateButton.type = 'button';
-    updateButton.innerHTML = isCancelButton ? 'Cancel' : 'Update Car';
-    updateButton.className = `btn btn-${isCancelButton ? 'dark' : 'info'}`;
-    updateButton.style.width = '40 px';
-    updateButton.addEventListener('Click', () => onEdit(id));
-
-
+    updateButton.innerHTML = isCancelButton ? 'Cancel' : 'UpdateCar';
+    updateButton.className = `btn btn-${isCancelButton ? 'success' : 'info'}`;
+    updateButton.style.width = '100px';
+    updateButton.addEventListener('click', () => onEdit(id));
 
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.innerHTML = 'Delete';
     deleteButton.className = 'btn btn-danger';
-    deleteButton.addEventListener('click', () => onDelete(id));
     deleteButton.style.width = '80px';
+    deleteButton.addEventListener('click', () => onDelete(id));
 
-    buttonCell.append(
-      deleteButton,
-      updateButton
-      );
-    rowHtmlElement.append(buttonCell);
+    buttonCell.append(updateButton, deleteButton);
+    tr.append(buttonCell);
   };
 
-  public updateProps = (newProps: Partial<TableProps<Type>>): void => {
+  public updateProps = (newProps: Partial<TableProps<Type>>) => {
     this.props = {
       ...this.props,
-      ...newProps
+      ...newProps,
     };
 
     this.renderView();
-  }
+  };
 }
 
 export default Table;
