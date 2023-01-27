@@ -10,6 +10,7 @@ export type TableProps<Type> = {
   columns: Type,
   rowsData: Type[],
   onDelete: (id: string) => void,
+  onEdit: (id: string) => void,
 };
 
 class Table<Type extends RowData> {
@@ -84,18 +85,31 @@ class Table<Type extends RowData> {
   };
 
   private addActionsCell = (rowHtmlElement: HTMLTableRowElement, id: string): void => {
-    const { onDelete } = this.props;
+    const { onDelete, onEdit } = this.props;
 
     const buttonCell = document.createElement('td');
+    buttonCell.className = 'd-flex justify-content-center gap-3'
+
+    const updateButton = document.createElement('button');
+    updateButton.type = 'button';
+    updateButton.innerHTML = 'Update car';
+    updateButton.className = 'btn btn-info';
+    updateButton.style.width = '40 px';
+    updateButton.addEventListener('Click', () => this.props.onEdit(id));
+
+
 
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
-    deleteButton.innerHTML = 'Delete car';
+    deleteButton.innerHTML = 'Delete';
     deleteButton.className = 'btn btn-danger';
     deleteButton.addEventListener('click', () => onDelete(id));
-    deleteButton.style.width = '60px';
+    deleteButton.style.width = '80px';
 
-    buttonCell.append(deleteButton);
+    buttonCell.append(
+      deleteButton,
+      updateButton
+      );
     rowHtmlElement.append(buttonCell);
   };
 
