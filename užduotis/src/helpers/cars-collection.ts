@@ -62,7 +62,7 @@ class CarsCollection {
     const brand = brands.find((b) => b.id === brandId);
 
     if (!model || !brand) {
-      throw new Error('Netinkami duomenys sukurti automobilį');
+      throw new Error('Incorrect Data');
     }
 
     const newCar: Car = {
@@ -72,6 +72,39 @@ class CarsCollection {
     };
 
     cars.push(newCar);
+  };
+
+  public update = (carId: string, { brandId, modelId, ...props }: CarProps) => {
+    const { cars, models, brands } = this.props;
+
+    console.log({
+      carId, brandId, modelId, ...props,
+    });
+
+    const updatedCarIndex = cars.findIndex((c) => c.id === carId);
+    if (updatedCarIndex === -1) {
+      throw new Error(`Error: Car Id is not found: '${carId}'`);
+    }
+
+    const model = models.find((m) => m.id === modelId);
+    if (!model) {
+      throw new Error(`Error: Car Model ID is not found: '${modelId}'`);
+    }
+
+    const brand = brands.find((b) => b.id === brandId);
+    if (!brand) {
+      throw new Error(`Error: Car Brand ID is not found: '${brandId}'`);
+    }
+
+    const updatedCar: Car = {
+      ...cars[updatedCarIndex],
+      ...props,
+      modelId,
+    };
+
+    console.log(updatedCar);
+
+    this.props.cars.splice(updatedCarIndex, 1, updatedCar);
   };
 }
 
