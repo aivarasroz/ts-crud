@@ -64,12 +64,15 @@ class Table<Type extends RowData> {
   };
 
   private renderBodyView = (): void => {
-    const { rowsData, columns } = this.props;
+    const { rowsData, columns, editedCarId } = this.props;
 
     this.tbody.innerHTML = '';
     const rowsHtmlElements = rowsData
       .map((rowData) => {
         const rowHtmlElement = document.createElement('tr');
+        if (editedCarId === rowData.id) {
+          rowHtmlElement.style.backgroundColor = '#C29FCF';
+        }
 
         const cellsHtmlString = Object.keys(columns)
           .map((key) => `<td>${rowData[key]}</td>`)
@@ -86,17 +89,18 @@ class Table<Type extends RowData> {
   };
 
   private addActionsCell = (rowHtmlElement: HTMLTableRowElement, id: string): void => {
-    const { onDelete, onEdit } = this.props;
+    const { onDelete, onEdit, editedCarId } = this.props;
 
     const buttonCell = document.createElement('td');
     buttonCell.className = 'd-flex justify-content-center gap-3'
 
+    const isCancelButton = editedCarId === id;
     const updateButton = document.createElement('button');
     updateButton.type = 'button';
-    updateButton.innerHTML = 'Update car';
-    updateButton.className = 'btn btn-info';
+    updateButton.innerHTML = isCancelButton ? 'Cancel' : 'Update Car';
+    updateButton.className = `btn btn-${isCancelButton ? 'dark' : 'info'}`;
     updateButton.style.width = '40 px';
-    updateButton.addEventListener('Click', () => this.props.onEdit(id));
+    updateButton.addEventListener('Click', () => onEdit(id));
 
 
 
