@@ -60,6 +60,7 @@ class App {
         year: '2000',
       },
       onSubmit: this.handleCreateCar,
+      isEdited: Boolean(this.editedCarId)
     });
   }
 
@@ -87,8 +88,21 @@ class App {
       };
   
       this.carsCollection.add(carProps);
-  
       this.renderView();
+    };
+
+    private handleUpdateCar= ({brand, model, price, year,}: Values): void => {
+      if (this.editedCarId) {
+        const carProps: CarProps = {
+          brandId: brand,
+          modelId: model,
+          price: Number(price),
+          year: Number(year),
+        };
+
+        this.editedCarId = null;
+        this.renderView();
+      }
     };
 
     private handleCarEdit = (carId: string) => {
@@ -116,6 +130,47 @@ class App {
         this.carTable.updateProps({
           title: `${brand.title} brand`,
           rowsData: carsCollection.getByBrandId(selectedBrandId).map(stringifyProps),
+        });
+      }
+      if (editedCarId) {
+        const editedCar = cars.find((c) => c.id === editedCarId);
+        if (!editedCar) {
+          alert('Car is not found');
+          return;
+        }
+  
+        const model = models.find((m) => m.id === editedCar.modelId);
+  
+        if (!model) {
+          alert('Car is not Found');
+          return;
+        }
+  
+        this.carForm.updateProps({
+          title: 'Update Car Details',
+          submitBtnText: 'Update',
+          values: {
+            brand: model.brandId,
+            model: model.id,
+            price: String(editedCar.price),
+            year: String(editedCar.year),
+          },
+          isEdited: true,
+          onSubmit: this.handleUpdateCar,
+        });
+      } else {
+        const initialBrandId = brands[0].id;
+        this.carForm.updateProps({
+          title: 'Create New Vehicle',
+          submitBtnText: 'Create',
+          values: {
+            brand: initialBrandId,
+            model: models.filter((m) => m.brandId === initialBrandId)[0].id,
+            price: '',
+            year: '',
+          },
+          isEdited: false,
+          onSubmit: this.handleCreateCar,
         });
       }
     };
